@@ -71,7 +71,7 @@ $(function() {
           */
         it('should change visibility when clicked', function(){
             $('.menu-icon-link').click();
-            expect('.menu-icon-link').not.toHaveClass('menu-hidden');
+            expect($('body')).not.toHaveClass('menu-hidden');
 
             $('.menu-icon-link').click();
             expect($('body')).toHaveClass('menu-hidden');
@@ -88,7 +88,13 @@ $(function() {
          * Remember, loadFeed() is asynchronous so this test will require
          * the use of Jasmine's beforeEach and asynchronous done() function.
          */
-        it('should have at least a single entry in the feed container', function() {
+         beforeEach(function(done) {
+            loadFeed(function() {
+                done();
+            });
+         });
+
+        it('should have at least a single entry in the feed container', function(done) {
 
         });
     });
