@@ -72,33 +72,49 @@ $(function() {
 
         //The test then ensures that after `loadFeed` is called, the feed should not be empty and should contain
         //child DOM elements
-        it('should have at least a single entry in the feed container', function(done) {
+        it('should have at least a single entry in the feed container', function() {
             expect(container).not.toBeEmpty();
-            done();
         });
     });
 
     //The final test suite tests to ensure that the various feeds load and display different content
+    //helped by discussion here https://discussions.udacity.com/t/psa-two-important-notes-about-jquery-jasmine-jquery/36742
+    //and here https://discussions.udacity.com/t/trouble-with-the-new-feed-test-and-quest-for-an-explanation/43283
     describe('New Feed Selection', function() {
         var oldFeed, newFeed;
 
-        //This function block ensures that the asyc API call can be tested properly. It then saves the html results from
-        //the feed to a variable `oldFeed`.
+        //This function block ensures that the asyc API call can be tested properly through Jasmine's done function
+        //for asynchronous tests
         beforeEach(function(done) {
-            loadFeed(2, done);
-            oldFeed = $('.feed').html();
+            //`loadFeed` is called with feed two.
+            loadFeed(2, function() {
+                //The RSS feed results are saved as a variable in HTML format
+                oldFeed = $('.feed').html();
+                //and the feed is logged to the console to ensure that the test is working properly
+                console.log(oldFeed);
+                //the done function is then called so Jasmine knows to move the test on
+                done();
+            });
         });
 
-        //This test then calls `loadFeed` a second time with a different feed set to be loaded
-        it('should change the content of the feed container', function() {
-            //helped by discussion here https://discussions.udacity.com/t/psa-two-important-notes-about-jquery-jasmine-jquery/36742
-            loadFeed(0);
-            //The results of that new API call are then stored in a variable as HTML
-            newFeed = $('.feed').html();
+        //This test calls relies on a callback to done to ensure async testing
+        it('should change the content of the feed container', function(done) {
+            //`loadFeed` is called a second time with a different feed
+            loadFeed(0, function() {
 
-            //And the two feeds are then compared against each other to ensure that they are not the same and
-            //that the feed's HTML did indeed change.
-            expect(newFeed).not.toBe(oldFeed);
+                //The results of that new API call are then stored in a variable as HTML
+                newFeed = $('.feed').html();
+
+                //this feed is also logged to the console to ensure that the test is working properly
+                console.log(newFeed);
+
+                //And the two feeds are then compared against each other to ensure that they are not the same and
+                //that the feed's HTML did indeed change and are not the same.
+                expect(newFeed).not.toBe(oldFeed);
+
+                //done is then called to end the testing in the block
+                done();
+            });
         });
     });
 }());
